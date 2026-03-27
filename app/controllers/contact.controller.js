@@ -93,6 +93,23 @@ exports.delete = async (req, res, next) => {
         );
     }
 };
+// Find all favorite contacts of a user
+exports.findAllFavorite = async (_req, res, next) => {
+    try {
+        const contactService = new ContactService(MongoDB.client);
+        const documents = await contactService.findFavorite();
+        return res.send(documents);
+    } catch (error) {
+        return next(
+            new ApiError(
+                500,
+                "An error occurred while retrieving favorite contacts"
+            )
+        );
+    }
+};
+
+
 
 exports.findOne = (req, res) => {
     res.send({ message: "findOne handler" });
