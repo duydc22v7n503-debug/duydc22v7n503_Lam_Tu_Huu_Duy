@@ -38,7 +38,43 @@ exports.findAll = async (req, res, next) => {
 
     return res.send(documents);
 };
+// Find a single contact with an id
+exports.findOne = async (req, res, next) => {
+    try {
+        const contactService = new ContactService(MongoDB.client);
+        const document = await contactService.findById(req.params.id);
+        if (!document) {
+            return next(new ApiError(404, "Contact not found"));
+        }
+        return res.send(document);
+    } catch (error) {
+        return next(
+            new ApiError(
+                500,
+                `Error retrieving contact with id=${req.params.id}`
+            )
+        );
+    }
+};
+// Update a contact by the id in the request
+exports.update = async (req, res, next) => {
+    if (Object.keys(req.body).length === 0) {
+        return next(new ApiError(400, "Data to update can not be empty"));
+    }
 
+    try {
+        const contactService = new ContactService(MongoDB.client);
+        const document = await contactService.update(req.params.id, req.body);
+        if (!document) {
+            return next(new ApiError(404, "Contact not found"));
+        }
+        return res.send({ message: "Contact was updated successfully" });
+    } catch (error) {
+        return next(
+            new ApiError(500, `Error updating contact with id=${req.params.id}`)
+        );
+    }
+};
 
 exports.findOne = (req, res) => {
     res.send({ message: "findOne handler" });
